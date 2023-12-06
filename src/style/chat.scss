@@ -1,0 +1,28 @@
+
+.fully-container{
+
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+    background-color: #E0F4FF;
+    .container{
+        margin: 0;
+        padding: 0;
+        height: 85vh;
+        width: 85vw;
+        border: 10px solid #FF4B91;
+        border-radius: 5px;
+        background-color: #87C4FF;
+        display: grid;
+        grid-template-columns: 25% 75%;
+        @media screen and (min-width:720px) and (max-width:1080px){
+            grid-template-columns: 35% 65%;
+        }
+        
+    }
+
+}
