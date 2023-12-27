@@ -15,16 +15,25 @@ function Chat() {
   const [contacts,setContacts]=useState([]);
   const [currentChat,setcurrentChat]=useState(undefined);
   const [currentUser,setCurrentUser]=useState(undefined);
+  const [optionsUser,setOptionUser]=useState(undefined);
   const [isLoaded,setIsLoaded]=useState(false);
   const navigate=useNavigate();
   
  const fetchUser=async()=>{
     try {
-
       const user=await getUserById(userId);
+      console.log("user");
       console.log(user);
       if(user){
+        const optionsUser={
+          id:user.data.id,
+          email:user.data.email,
+          userName:user.data.userName,
+          avatarImage:user.data.avatarImage,
+          isAvatarImageSet:user.data.isAvatarImageSet
+        };
         setCurrentUser(user);
+        setOptionUser(optionsUser);
         setIsLoaded(true);
       }
     } catch (error) {
@@ -37,7 +46,8 @@ const allContacts=async()=>{
   if(response.data!=null){
     setContacts(response.data)
   }
-}
+};
+
   useEffect(()=>{
     if(localStorage.getItem("dot-chat-user") ==null){
       navigate(`/login`);
@@ -58,10 +68,13 @@ const allContacts=async()=>{
 const handleChatChange=(chat)=>{
 setcurrentChat(chat);
 }
+// const handleChatGroupList=()=>{
+//   allChatGroup();
+// }
   return (
     <div className='fully-container'>
       <div className='container'>
-        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
+        <Contacts  contacts={contacts} currentUser={currentUser} optionsUser={optionsUser} changeChat={handleChatChange}/>
         {isLoaded && currentChat===undefined?
         (<Welcome currentUser={currentUser}/>) :
         (<ChatContainer currentChat={currentChat}/>)

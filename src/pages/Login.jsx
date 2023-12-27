@@ -20,7 +20,7 @@ function Login() {
       console.log("Log alındı");
     }
     else            
-    console.log("log alınamadı");
+    console.log("log alınamadı"); 
   }
 
     //Localde saklanan veriyi Web Crypto API kullanarak şifreleme işlemi

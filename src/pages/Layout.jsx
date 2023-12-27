@@ -1,20 +1,18 @@
-import {React,useState,useEffect} from 'react'
-import { Link, useNavigate } from 'react-router-dom';
-import * as signalR from '@microsoft/signalr';
+import {React} from 'react'
 import { Provider } from 'react-redux';
 import store from '../store';
 import ConnectionProvider from '../components/ConnectionProvider';
 import Navbarx from '../components/Navbarx'
-import Home from './Home';
-
+import { Outlet } from 'react-router-dom'
 function Layout() {
     
   return (
     <>
+    {/* <Navbarx ></Navbarx> */}
      <Provider store={store}>
        <ConnectionProvider> 
-        <Navbarx ></Navbarx>
-        <Home />
+       <Outlet>
+        </Outlet>
       </ConnectionProvider>
      </Provider>
     </>

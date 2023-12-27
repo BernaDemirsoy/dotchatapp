@@ -11,13 +11,14 @@ export default function ChatContainer({currentChat}) {
     // const connectionId = useSelector(state => state.connectionId);
 
     const [receiveMessage,setReceiveMessage]=useState("");
-    // useEffect(()=>{
-    //     console.log(connection==null||undefined?"yok":"var");
-    // },[])
+
     const handleSendMsg=async(msg)=>{
+        const data={
+            message:msg,
+            groupId:currentChat.id
+        };
         if (connection) {
-            alert(msg);
-            const response=await(sendMessage(msg));
+            const response=await sendMessage(data);
             if(response){
                 console.log("Mesaj gönderildi");
             }
@@ -47,10 +48,10 @@ export default function ChatContainer({currentChat}) {
         <div className="chat-header">
             <div className="user-details">
                 <div className="avatar">
-                <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt='avatar'></img>
+                <img src={`data:image/svg+xml;base64,${currentChat.groupAvatarImage || currentChat.avatarImage}`} alt='avatar'></img>
                 </div>
                 <div className="userName">
-                    <h3>{currentChat.userName}</h3>
+                    <h3>{currentChat.description??currentChat.userName}</h3>
                 </div>
                 
             </div>
