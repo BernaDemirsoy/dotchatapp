@@ -4,7 +4,7 @@ import logo from  "../assets/logo.svg"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Card, Image, Form, Button,Stack } from 'react-bootstrap';
 import '../index.css';
-import { register} from '../services/api';
+import { register,connectingLog} from '../services/api';
 import { toast } from "react-toastify";
 import { useSelector } from 'react-redux';
 
@@ -16,8 +16,6 @@ function Register() {
     const[email,setEmail]=useState("");
     const[passwordHash,setPasswordHash]=useState("");
     const[confirmedPasswordHash,setConfirmedPasswordHash]=useState("");
-    const connection = useSelector(state => state.connection);
-    const connectionId = useSelector(state => state.connectionId);
 
     // useEffect(()=>{
     //     if(localStorage.getItem("dot-chat-user")){
@@ -66,7 +64,7 @@ function Register() {
                 const userId=response.data.user.id;
                 console.log(response.data.user.id);
                 EncryptData(response.data.user);
-                debugger;
+               
                 navigate(`/setavatar/${userId}`);  
             } 
         } catch (error) {

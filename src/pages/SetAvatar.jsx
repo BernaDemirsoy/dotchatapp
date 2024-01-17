@@ -11,8 +11,6 @@ import { useSelector } from 'react-redux';
 export default function SetAvatar() {
     const navigate=useNavigate();
     const {userId}=useParams();
-    const connection = useSelector(state => state.connection);
-    const connectionId = useSelector(state => state.connectionId);
     const [avatars,setAvatars]=useState([]);
     const [isLoading,setIsLoading]=useState(true);
     const [selectedAvatar,setSelectedAvatar]=useState(undefined);

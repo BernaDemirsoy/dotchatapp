@@ -14,10 +14,10 @@ import { FormControl,FormGroup  } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Stack from '@mui/material/Stack';
 import { PiAddressBookFill } from "react-icons/pi";
-import {createGroupMembers,createGroup,getAllGroupChats} from "../services/api"
+import {createGroup,getAllGroupChats,createGroupMembers,groupExistingControl} from "../services/api"
 import { useSelector } from 'react-redux';
 
-export default function Contacts({contacts,currentUser,optionsUser,changeChat}) {
+export default function Contacts({contacts,currentUser,changeChat,setChatType}) {
    const connectionId = useSelector(state => state.connectionId);
    const connection = useSelector(state => state.connection);
 
@@ -25,9 +25,8 @@ export default function Contacts({contacts,currentUser,optionsUser,changeChat}) 
   const [currentUserImage,setCurrentUserImage]=useState(undefined);
   const [currentSelected,setCurrentSelected]=useState(undefined);
   const [contactsArea,setContactsAres]=useState(false);
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [groupChats, setGroupChats] = useState([]);
-  const [isGrupAdiEnabled,setIsGrupAdiEnabled]=useState(false);
+  const [whichChatType,setValueforWhichChatType]=useState(0);
+  const [groups, setGroupChats] = useState([]);
   const [groupName,setGroupName]=useState("");
   const [groupAvatarImage,setgroupAvatarImage]=useState(undefined);
   const [value, setValue] = useState('one');
@@ -43,10 +42,10 @@ export default function Contacts({contacts,currentUser,optionsUser,changeChat}) 
     whiteSpace: 'nowrap',
     width: 1,
   });
-  
 
   const handleChange = (event, newValue) => {
       setValue(newValue);
+      setChatType(newValue);
       setCurrentSelected(undefined);
   };
 
@@ -54,11 +53,67 @@ export default function Contacts({contacts,currentUser,optionsUser,changeChat}) 
     if(currentUser){
       setCurrentUserImage(currentUser.data.avatarImage);
       setCurrentUserName(currentUser.data.userName);
-      allChatGroup();
     }
   },[currentUser]);
+  const createGroupForStarting=async()=>{
+    try {
+        // const data=new FormData();
+        contacts.forEach(async contact => { 
 
+            const exist=await groupExistingControl(currentUser.data.userName+"//"+contact.userName);
+            const chatgroups=exist.data;
+              if(chatgroups.length==0){
+                    const data={
+                      
+                      description:currentUser.data.userName+"//"+contact.userName,
+                      IsBinaryGroup:1};
+                      debugger;
+                    const response=await createGroup(data);
+                    if(!(response.status=="200" && response.data!=null)){
+                      console.log(response.error.message);
+                    }else
+                    {
+                      console.log("grubun versi");
+                      console.log(response);
+                      const memberInfo={
+                        currentUserId:currentUser.data.id,
+                        chatGroup:response.data,
+                        contactUser:contact};
 
+                          //Yaratılan gruba member ataması yapıldı
+                          const finalResonse=await createGroupMembers(memberInfo);
+                          console.log("grup member bilgileri");
+                          console.log(finalResonse.data);
+                      };
+                
+              };
+        });
+       
+ 
+    } catch (error) {
+      alert(error.message+"grup oluşturulurken hata alındı");
+    }
+    
+  };
+  useEffect(()=>{
+    allChatGroup();
+  },[]);
+
+  useEffect(()=>{
+
+    debugger;
+    if(contacts.length>0){
+      createGroupForStarting();
+    }
+  },[contacts]);
+
+  const allChatGroup=async()=>{
+    const response=await getAllGroupChats();
+    if(response.data!=null && response.status=="200"){
+      console.log(response.data);
+      setGroupChats(response.data);
+    }  
+  }
  // File'ı base64'e çevirme
 const toBase64 = async (file) => {
   return new Promise((resolve, reject) => {
@@ -90,29 +145,20 @@ const shortenBase64 = async (file) => {
   }
 };
 
-  const handleAutocompleteChange = (event, value) => {
-    setSelectedOptions(value);
-  
-    if(value.length>=2){
-      setIsGrupAdiEnabled(true);
-    }
-    else{
-      setIsGrupAdiEnabled(false);
-    }
-  };
- 
   //Api fonksiyonu
   async function createGroupFunc(data){
-  
+
     try {
       //group yaratıldı
       const response=await createGroup(data);
-      console.log("grubun versi");
-      console.log(response);
       if(!(response.status=="200" && response.data!=null)){
        console.log(response.error.message);
-      };
-      handleGroups();
+      }else
+      {
+        console.log("grubun versi");
+        console.log(response);
+      }
+      
     } catch (error) {
       
       console.log(error.message || "Bir hata oluştu.");
@@ -120,7 +166,6 @@ const shortenBase64 = async (file) => {
   } 
   const handleCreateGroup=async(e)=>{
     e.preventDefault();
-    // console.log(selectedOptions);
     const data=new FormData();
     try {
       const file=groupAvatarImage;
@@ -130,31 +175,30 @@ const shortenBase64 = async (file) => {
         data.append("description",groupName);
         data.append("groupAvatarImage",fileBase64Shorthed);
         createGroupFunc(data);
-        setContactsAres(!contactsArea);
+        handleGroups();
+        console.log(groups.length);
     } catch (error) {
       console.log(error.message || "Bir hata oluştu.");
     }
   };
-  const allChatGroup=async()=>{
-    const response=await getAllGroupChats(currentUser.data.id);
-    if(response.data!=null && response.status=="200"){
-      console.log(response.data);
-      setGroupChats(response.data);
-    }
-  }
+
   const handleChangeContactsArea=()=>{
     setContactsAres(!contactsArea);
-    allChatGroup();
   }
   const changeCurrentChat=(index,group)=>{
     setCurrentSelected(index)
     changeChat(group)
   }
   const handleGroups=()=>{
-    connection.on("groups",groups=>{
+    connection.on("groups",grouplist=>{
+
       console.log("Serverdan gelen grup array");
-      console.log(groups);
+      var filteredGroup=grouplist.filter(group => group.isBinaryGroup === 0);
+      console.log(filteredGroup);
+      setGroupChats(filteredGroup);
     });
+    setContactsAres(!contactsArea);
+   
   }
   return (
     <>
@@ -245,15 +289,15 @@ const shortenBase64 = async (file) => {
                         </div>
                     </div>
                   )
-                  }):<span>Henüz hiç bir grup oluşturmadınız</span>
+                  }):<span>Henüz konuşma başlatılacak hiç kimse yok!</span>
                   }
                 </div>
               )}
 
               {value === 'two' && (
                 <div>
-                  {groupChats.length>0?
-                  groupChats.map((group,index)=>{
+                  {groups.length>0?
+                  groups.map((group,index)=>{
                   return (
                     <div className={`group ${index===currentSelected?"selected":""}`} key={index} onClick={()=>changeCurrentChat(index,group)}>
                         <div className="avatar">
@@ -264,7 +308,7 @@ const shortenBase64 = async (file) => {
                         </div>
                     </div>
                   )
-                  }):<span>Henüz hiç bir sohbet başlatmadınız</span>
+                  }):<span>Henüz hiç bir grup oluşturulmadı!</span>
                   }
                 </div>
               )}

@@ -11,8 +11,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, connection: action.payload };
       case 'SET_CONNECTIONID':
         return { ...state, connectionId: action.payload };
-      default:
-        return state;
+        default:
+          return state;
   }
 };
 

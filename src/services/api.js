@@ -1,7 +1,7 @@
 import axios from "axios";
 import {Buffer} from 'buffer';
 
-const API_BASE_URL_ACCOUNT = 'https://localhost:7063/api';
+const API_BASE_URL_ACCOUNT = 'http://localhost:5189/api';
 const API_RANDOM_AVATAR="https://api.multiavatar.com";
 // Giriş yapma
 export async function login(data) {
@@ -96,9 +96,10 @@ export async function setAvatar(id,data) {
   }
 }
 //Mesaj Gönderme
-export async function sendMessage(data) {
+export async function sendMessageToBinaryGroup(data) {
+  debugger;
   try {
-    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/Chat/SendMessage`, data,{
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/SendMessageToBinaryGroup`, data,{
       headers: {
         'Content-Type': 'application/json',
       },
@@ -109,8 +110,41 @@ export async function sendMessage(data) {
     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
   }
 }
+//Bütün mesajların listelenmesi
+// export async function getAllChatMessage(data) {
+//   debugger;
+//   try {
+//     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/getAllChatMessage`, data,{
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+     
+//     });
+//     return response;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
+//   }
+// }
+
+//User idleri memberidye dönüştür
+// export async function findGroupChatIdByClientId(data) {
+//   debugger;
+//   try {
+//     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/findGroupChatIdByClientId`, data,{
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+     
+//     });
+//     return response;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
+//   }
+// }
+
 //ChatGroup oluşturma
 export async function createGroup(data) {
+  
   try {
     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/createGroup`, data, {
       headers: {
@@ -124,14 +158,13 @@ export async function createGroup(data) {
   }
 }
 //Group members oluşturma
-export async function createGroupMembers(membersInfo) {
+export async function createGroupMembers(memberInfo) {
+
   try {
-    debugger;
-    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/createGroupMembers`, membersInfo, {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/createGroupMembers`, memberInfo, {
       headers: {
         'Content-Type': 'application/json',
       },
-     
     });
     return response;
   } catch (error) {
@@ -141,7 +174,7 @@ export async function createGroupMembers(membersInfo) {
 //Giriş logu yaratma
 export async function connectingLog(data) {
   try {
-    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/Chat`, data, {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/Chat/ConnectingLog`, data, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -153,13 +186,58 @@ export async function connectingLog(data) {
     throw new Error(error.response?.data?.title || 'Kayıt yapılamadı.');
   }
 }
+//ConnectionId güncelleme;
+export async function updateConnectionLog(data){
+  try {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/Chat/UpdateConnectionLog`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+     
+    });
 
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Kayıt yapılamadı.');
+  }
+}
+//Connection kapama güncellemesi;
+export async function closedConnectionLog(data){
+  try {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/Chat/ClosedConnectionLog`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+     
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Kayıt yapılamadı.');
+  }
+}
 // Bütün kullanıcıları göstermex  
-export async function getAllContacts(userId) {
+export async function getAllContacts(userid) {
   try {
     const response = await axios.get(`${API_BASE_URL_ACCOUNT}/Chat/GetAllContacts`,{
       params: {
-        userid:userId,
+        userId:userid,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      } 
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Liste alınamadı');
+  }
+}
+// Bütün kullanıcıları göstermex  
+export async function groupExistingControl(description) {
+  try {
+    const response = await axios.get(`${API_BASE_URL_ACCOUNT}/Chat/GroupsExistingControl`,{
+      params: {
+        description:description,
       },
       headers: {
         'Content-Type': 'application/json',
@@ -171,13 +249,10 @@ export async function getAllContacts(userId) {
   }
 }
 // Chat geçmişini getirir  
-export async function getAllGroupChats(userId) {
-  debugger;
+export async function getAllGroupChats(userid) {
   try {
     const response = await axios.get(`${API_BASE_URL_ACCOUNT}/Chat/GetAllGroupChats`,{
-      params: {
-        userid:userId,
-      },
+
       headers: {
         'Content-Type': 'application/json',
       } 

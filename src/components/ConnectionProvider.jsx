@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import {updateConnectionLog,closedConnectionLog} from '../services/api';
 import { useDispatch } from 'react-redux';
 import { setConnection,setConnectionId } from '../features/action';
 import { HubConnectionBuilder } from '@microsoft/signalr';
@@ -9,7 +10,7 @@ const ConnectionProvider = ({ children }) => {
   useEffect(() => {
     // Bağlantıyı oluştur
     const connection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7063/Chat")  // Hub URL'sini belirtin
+      .withUrl("http://localhost:5189/Chat")  // Hub URL'sini belirtin
       .build();
 
     // Bağlantıyı Redux store'a set et
@@ -17,20 +18,18 @@ const ConnectionProvider = ({ children }) => {
 
     // Bağlantıyı başlat
     connection.start()
-      .then(() => {
-        console.log('Bağlantı başarıyla başlatıldı.');
-      })
-      .catch(error => {
-        console.error('Bağlantı başlatılırken hata oluştu:', error);
-      });
+    .then(() => {
+      console.log('Bağlantı başarıyla başlatıldı.');
+      // Access connectionId after the connection is started
+      // console.log('ConnectionId:', connection.connectionId);
+      // dispatch(setConnectionId(connection.connectionId));
+    })
+    .catch(error => {
+      console.error('Bağlantı başlatılırken hata oluştu:', error);
+    });
+      
 
-      // UserJoin olayını dinleme
-       connection.on("UserJoin", (connectionId) => {
-        console.log(`User connectionID: ${connectionId}`);
-        dispatch(setConnectionId(connectionId));
-      });
-
-  }, [dispatch]);
+  },[]);
 
   return <>{children}</>;
 };

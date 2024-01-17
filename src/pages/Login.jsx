@@ -7,20 +7,15 @@ import '../index.css';
 import { login,connectingLog} from '../services/api';
 import { useSelector } from 'react-redux';
 
+
 function Login() {
   const navigate = useNavigate();
   const[email,setEmail]=useState("");
+  
   const[passwordHash,setPasswordHash]=useState("");
   const connection = useSelector(state => state.connection);
-  const connectionId = useSelector(state => state.connectionId);
-
-  async function fetchData(userData){
-    const response=await connectingLog(userData);
-    if(response.status==200){
-      console.log("Log alındı");
-    }
-    else            
-    console.log("log alınamadı"); 
+  async function fetchData(user){
+    connection.invoke("GetUser",user).catch(error=>console.error(error));
   }
 
     //Localde saklanan veriyi Web Crypto API kullanarak şifreleme işlemi
@@ -36,6 +31,7 @@ function Login() {
     })
     .catch(error => console.error(error));
   }
+  
 
   const handleSubmit= async(e)=>{
         e.preventDefault();
@@ -50,16 +46,9 @@ function Login() {
             if(response.status==200){
               EncryptData(response.data);
                   let user=response.data;
-                  // debugger;
-                  // console.log(connection);
-                  // console.log(connectionId?"connectionId":"yok");
-                  let userData={
-                      user:user,
-                      connectionId:connectionId
-                  }
-                  console.log(userData);
-                  fetchData(userData);
-                  navigate(`/chat/${userData.user.id}`);   
+                  fetchData(user);
+                  
+                  navigate(`/chat/${user.id}`);   
             }
         } catch (error) {
             alert(error.message)
