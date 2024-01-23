@@ -58,9 +58,10 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
   const createGroupForStarting=async()=>{
     try {
         // const data=new FormData();
+        
         contacts.forEach(async contact => { 
 
-            const exist=await groupExistingControl(currentUser.data.userName+"//"+contact.userName);
+            const exist=await groupExistingControl(contact.chatGroupId);
             const chatgroups=exist.data;
               if(chatgroups.length==0){
                     const data={
@@ -101,16 +102,16 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
 
   useEffect(()=>{
 
-    debugger;
     if(contacts.length>0){
       createGroupForStarting();
     }
   },[contacts]);
 
   const allChatGroup=async()=>{
-    const response=await getAllGroupChats();
+    const filteredId=0;
+    const response=await getAllGroupChats(filteredId);
     if(response.data!=null && response.status=="200"){
-      console.log(response.data);
+      //console.log(response.data);
       setGroupChats(response.data);
     }  
   }
@@ -186,6 +187,7 @@ const shortenBase64 = async (file) => {
     setContactsAres(!contactsArea);
   }
   const changeCurrentChat=(index,group)=>{
+    debugger;
     setCurrentSelected(index)
     changeChat(group)
   }

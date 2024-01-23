@@ -111,20 +111,23 @@ export async function sendMessageToBinaryGroup(data) {
   }
 }
 //Bütün mesajların listelenmesi
-// export async function getAllChatMessage(data) {
-//   debugger;
-//   try {
-//     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/getAllChatMessage`, data,{
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
+export async function getAllChatMessage(ChatGroupId) {
+  
+  try {
+    const response = await axios.get(`${API_BASE_URL_ACCOUNT}/chat/getAllChatMessage`,{
+      params:{
+        ChatGroupId:ChatGroupId,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
      
-//     });
-//     return response;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
-//   }
-// }
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
+  }
+}
 
 //User idleri memberidye dönüştür
 // export async function findGroupChatIdByClientId(data) {
@@ -233,11 +236,11 @@ export async function getAllContacts(userid) {
   }
 }
 // Bütün kullanıcıları göstermex  
-export async function groupExistingControl(description) {
+export async function groupExistingControl(ChatGroupId) {
   try {
     const response = await axios.get(`${API_BASE_URL_ACCOUNT}/Chat/GroupsExistingControl`,{
       params: {
-        description:description,
+        ChatGroupId:ChatGroupId,
       },
       headers: {
         'Content-Type': 'application/json',
@@ -249,10 +252,12 @@ export async function groupExistingControl(description) {
   }
 }
 // Chat geçmişini getirir  
-export async function getAllGroupChats(userid) {
+export async function getAllGroupChats(filteredId) {
   try {
     const response = await axios.get(`${API_BASE_URL_ACCOUNT}/Chat/GetAllGroupChats`,{
-
+      params:{
+        filteredId:filteredId,
+      },
       headers: {
         'Content-Type': 'application/json',
       } 

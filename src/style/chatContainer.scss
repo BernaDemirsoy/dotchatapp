@@ -1,12 +1,21 @@
 
 .cc-Container{
-    padding-top: 0rem;
+   
+    display: grid;
+    grid-template-rows: 10% 80% 10%;
+    gap:0.1rem;
+    overflow: hidden;
+    @media screen and (min-width: 720px) and (max-width:1080px){
+        grid-template-rows: 8% 82% 10%;
+    }
+        
+    
     .chat-header{
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 2rem;
-        background-color: rgb(16, 46, 63) ;
+        background-color: rgb(46, 16, 63);
     }
     .user-details{
         display: flex;

@@ -55,17 +55,7 @@ export default function ChatContainer({currentChat,currentUser,chatType}) {
         console.log(receiveMessage);
      },[connection])
    
-    // const handleReceiveMsg=async(msg)=>{
-    //    debugger;
-    //     if (connection) {
-    //         connection.on("receiveMessage",msg=>{
-    //             setReceiveMessage(msg);
-    //             console.log(receiveMessage);
-    //         });
-    //     }else {
-    //         console.log('Bağlantı "Connected" durumunda değil.');
-    //     }
-    // };
+    
   return (
     <>
     {currentChat && (
@@ -82,7 +72,7 @@ export default function ChatContainer({currentChat,currentUser,chatType}) {
             </div>
            <Logout></Logout>
         </div>
-        <Messages  receiveMessage={receiveMessage}></Messages>
+        <Messages  receiveMessage={receiveMessage} currentChat={currentChat} currentUser={currentUser}></Messages>
         <ChatInput handleSendMsg={handleSendMsg} ></ChatInput>
     </div>
     )}
