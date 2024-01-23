@@ -3,6 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import "../style/messages.scss";
 import {getAllChatMessage,findGroupChatIdByClientId} from "../services/api"
 import { useSelector } from 'react-redux';
+import { BiCheckDouble } from "react-icons/bi";
 export default function Messages({receiveMessage,currentChat,currentUser}) {
   const connection = useSelector(state => state.connection);
   const [messages,setmessages]=useState([]);
@@ -24,7 +25,12 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
   fetchMessagesData(); 
   debugger;
  console.log(messages);
-  },[currentChat,receiveMessage])
+  },[currentChat,receiveMessage]);
+
+  const formatDate = (dateTimeString) => {
+    const dateTimeObject = new Date(dateTimeString);
+    return dateTimeObject.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+};
   return (
     <div className='msg-Container'>
       {
@@ -34,9 +40,16 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
             <div>
               <div className={`message ${message.userId!=currentUser.data.id?"sended":"recieved"}`}>
                 <div className="content">
-                  <p>
+                  <p className='msg'>
                     {message.message}
                   </p>
+                  <div className='delivered-date-container'>
+                    
+                    <p className='deliveredDate'>{formatDate(message.deliveredDate)}</p>
+                    <p className={`status ${message.isRead?"readed":"unreaded"}`}>{message.isRead?"Okundu":"İletildi"}</p>
+                    <BiCheckDouble size={20} className={`check ${message.isRead?"readed":"unreaded"}`}/>
+                 
+                  </div>
                 </div>
               </div>
             </div>

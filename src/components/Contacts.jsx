@@ -55,6 +55,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
       setCurrentUserName(currentUser.data.userName);
     }
   },[currentUser]);
+  
   const createGroupForStarting=async()=>{
     try {
         // const data=new FormData();

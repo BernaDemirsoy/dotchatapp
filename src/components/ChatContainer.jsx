@@ -6,10 +6,11 @@ import Messages from './Messages';
 import {sendMessageToBinaryGroup} from "../services/api"
 import { useSelector } from 'react-redux';
 import Logout from '../components/Logout';
-export default function ChatContainer({currentChat,currentUser,chatType}) {
+export default function ChatContainer({currentChat,currentUser,chatType,receiverMessageNumber}) {
 
     const connection = useSelector(state => state.connection);
     const [receiveMessage,setReceiveMessage]=useState("");
+    const [count,setCount]=useState(0);
 
     const handleSendMsg=async(msg)=>{
         
@@ -47,9 +48,13 @@ export default function ChatContainer({currentChat,currentUser,chatType}) {
         
      };  
      useEffect(()=>{
+        count=0;
         if(connection){
             connection.on("receiveMessage",msg=>{
                 setReceiveMessage(msg);
+                count++;
+                setCount(count);
+                receiverMessageNumber(count);
             });
         };
         console.log(receiveMessage);
