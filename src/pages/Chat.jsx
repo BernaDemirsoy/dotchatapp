@@ -19,6 +19,8 @@ function Chat() {
   const [optionsUser,setOptionUser]=useState(undefined);
   const [chatType,setChatType]=useState("one");
   const [isLoaded,setIsLoaded]=useState(false);
+  const [counterRealTime,setCounter]=useState([]);
+  const [receiverMessageExists,setReceiverMessageExists]=useState(false);
   const [isCreateGroupExecuted, setIsCreateGroupExecuted] = useState(false);
   const navigate=useNavigate();
   
@@ -100,13 +102,21 @@ const handleChatType=(type)=>{
   setChatType(type);
 }
 
+const handleCount=(counter)=>{
+
+  setCounter(counter);
+  debugger;
+  console.log("chatteyim");
+  console.log(counter);
+}
+
   return (
     <div className='fully-container'>
       <div className='container'>
-        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} setChatType={handleChatType}/>
+        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} setChatType={handleChatType} currentChat={currentChat} counterRealTime={counterRealTime} />
         {isLoaded && currentChat===undefined?
         (<Welcome currentUser={currentUser}/>) :
-        (<ChatContainer currentUser={currentUser} currentChat={currentChat} chatType={chatType}/>)
+        (<ChatContainer currentUser={currentUser} currentChat={currentChat} chatType={chatType} contacts={contacts} setCounter={handleCount}/>)
         }
       </div>
     </div>

@@ -1,23 +1,21 @@
 import React,{useState,useEffect} from 'react'
 import logo from "../assets/logo.svg"
 import "../style/contacts.scss"
-import Autocomplete from '@mui/material/Autocomplete';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
 import { FormControl,FormGroup  } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import Stack from '@mui/material/Stack';
 import { PiAddressBookFill } from "react-icons/pi";
-import {createGroup,getAllGroupChats,createGroupMembers,groupExistingControl} from "../services/api"
+import {createGroup,getAllGroupChats,createGroupMembers,groupExistingControl,getUnreadedMessagesCount} from "../services/api"
 import { useSelector } from 'react-redux';
 
-export default function Contacts({contacts,currentUser,changeChat,setChatType}) {
+export default function Contacts({contacts,currentUser,changeChat,setChatType,currentChat,counterRealTime}) {
    const connectionId = useSelector(state => state.connectionId);
    const connection = useSelector(state => state.connection);
 
@@ -30,7 +28,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
   const [groupName,setGroupName]=useState("");
   const [groupAvatarImage,setgroupAvatarImage]=useState(undefined);
   const [value, setValue] = useState('one');
-
+  const [counter,setCounter]=useState([]);
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -55,13 +53,12 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
       setCurrentUserName(currentUser.data.userName);
     }
   },[currentUser]);
-  
+
   const createGroupForStarting=async()=>{
     try {
         // const data=new FormData();
         
         contacts.forEach(async contact => { 
-
             const exist=await groupExistingControl(contact.chatGroupId);
             const chatgroups=exist.data;
               if(chatgroups.length==0){
@@ -69,7 +66,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
                       
                       description:currentUser.data.userName+"//"+contact.userName,
                       IsBinaryGroup:1};
-                      debugger;
+                      
                     const response=await createGroup(data);
                     if(!(response.status=="200" && response.data!=null)){
                       console.log(response.error.message);
@@ -100,11 +97,31 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
   useEffect(()=>{
     allChatGroup();
   },[]);
+  
+
+  useEffect(() => {
+    debugger;
+    const updatedCounter = counter;
+    counter.map(eleman => {
+      if (eleman.name === counterRealTime.name) {
+        counter.splice(eleman);
+      }
+      const isNameExistInCounter = updatedCounter.some(eleman => eleman.name === counterRealTime.name);
+      if (!isNameExistInCounter) {
+        updatedCounter.push({ name: counterRealTime.name, count: counterRealTime.count });
+      }
+    })
+  
+    setCounter(updatedCounter);
+  }, [counterRealTime]);
+
 
   useEffect(()=>{
 
     if(contacts.length>0){
       createGroupForStarting();
+      getAllUnreadedMessages(contacts);
+      console.log(counter);
     }
   },[contacts]);
 
@@ -116,6 +133,28 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType}) 
       setGroupChats(response.data);
     }  
   }
+  const getAllUnreadedMessages = async (contacts) => {
+    const finalDataArray = [];
+    for (const contact of contacts) {
+      const listedData = {
+       
+      };
+      if (contact.id != currentUser.data.id) {
+        const data = {
+          groupChatId: contact.chatGroupId,
+          currentUserId: currentUser.data.id
+        };
+        const response = await getUnreadedMessagesCount(data);
+  
+        listedData.name = contact.userName; 
+        listedData.count = response.data;
+  
+        const finalData = { ...listedData };
+        finalDataArray.push(finalData);
+      }
+    }
+    setCounter(finalDataArray);
+  };
  // File'ı base64'e çevirme
 const toBase64 = async (file) => {
   return new Promise((resolve, reject) => {
@@ -188,7 +227,6 @@ const shortenBase64 = async (file) => {
     setContactsAres(!contactsArea);
   }
   const changeCurrentChat=(index,group)=>{
-    debugger;
     setCurrentSelected(index)
     changeChat(group)
   }
@@ -280,21 +318,27 @@ const shortenBase64 = async (file) => {
              </Tabs>
              {value === 'one' && (
                 <div>
-                  {contacts.length>0?
-                  contacts.map((contact,index)=>{
-                  return (
-                    <div className={`group ${index===currentSelected?"selected":""}`} key={index} onClick={()=>changeCurrentChat(index,contact)}>
+                {contacts.length > 0 ? (
+                  contacts.map((contact, index) => {
+                    let matchingCount = counter.find((count) => count.name === contact.userName);
+                    return (
+                      <div className={`group ${index === currentSelected ? "selected" : ""}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
                         <div className="avatar">
                           <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt='avatar'></img>
                         </div>
                         <div className="description">
                           <h3>{contact.userName}</h3>
+                          <Badge className='number' badgeContent={matchingCount ? Number(matchingCount.count) : 0} color="secondary">
+                            <MailIcon  />
+                          </Badge>
                         </div>
-                    </div>
-                  )
-                  }):<span>Henüz konuşma başlatılacak hiç kimse yok!</span>
-                  }
-                </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span>Henüz konuşma başlatılacak hiç kimse yok!</span>
+                )}
+              </div>
               )}
 
               {value === 'two' && (

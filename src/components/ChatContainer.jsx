@@ -6,11 +6,11 @@ import Messages from './Messages';
 import {sendMessageToBinaryGroup} from "../services/api"
 import { useSelector } from 'react-redux';
 import Logout from '../components/Logout';
-export default function ChatContainer({currentChat,currentUser,chatType,receiverMessageNumber}) {
+export default function ChatContainer({currentChat,currentUser,chatType,contacts,setCounter}) {
 
     const connection = useSelector(state => state.connection);
     const [receiveMessage,setReceiveMessage]=useState("");
-    const [count,setCount]=useState(0);
+   
 
     const handleSendMsg=async(msg)=>{
         
@@ -20,6 +20,7 @@ export default function ChatContainer({currentChat,currentUser,chatType,receiver
                     message:msg,
                     receiverClientId:currentChat.id,
                     currentUserId:currentUser.data.id,
+                    chatGroupId:currentChat.chatGroupId
                 };
                 if (connection) {
                     
@@ -27,7 +28,8 @@ export default function ChatContainer({currentChat,currentUser,chatType,receiver
                     if(response.status==200){
                         console.log(response.data);
                         connection.invoke("SendMessageToBinaryGroup",data).catch(error=>console.error(error));
-                        // handleReceiveMsg(msg);
+                        debugger;
+                        await handleSendUnreadedMessage();
                        
                     }
                     
@@ -47,20 +49,45 @@ export default function ChatContainer({currentChat,currentUser,chatType,receiver
         }
         
      };  
-     useEffect(()=>{
-        count=0;
-        if(connection){
-            connection.on("receiveMessage",msg=>{
-                setReceiveMessage(msg);
-                count++;
-                setCount(count);
-                receiverMessageNumber(count);
+     useEffect(() => {
+        
+        const finalDataArray = [];
+        if (connection) {
+          connection.on("receiveMessage", (msg) => {
+            setReceiveMessage(msg);
+            const listedData = {};
+            connection.on("receiveCount", (count) => {
+              debugger;
+              listedData.name = count.userName;
+              listedData.count = count.count;
+              const finalData = { ...listedData };
+              finalDataArray.push(finalData);
+              setCounter(finalDataArray);
             });
-        };
-        console.log(receiveMessage);
-     },[connection])
-   
+
+          });
+
+         
+        }
+       
+        
+      }, [connection]);
+      
+      const handleSendUnreadedMessage = async () => {
+        if (contacts.length > 0) {
+
+              let data = {
+                groupChatId: currentChat.chatGroupId,
+                currentUserId: currentUser.data.id,
+                receiverUserId: currentChat.id,
+              };
+      
+              await connection.invoke("SetUnreadedMessage", data).catch((error) => console.error(error));
+        }
+      };
+      
     
+
   return (
     <>
     {currentChat && (

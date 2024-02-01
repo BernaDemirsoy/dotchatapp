@@ -128,7 +128,22 @@ export async function getAllChatMessage(ChatGroupId) {
     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
   }
 }
-
+//Bütün okunmamış mesajları listelenmesi
+export async function getUnreadedMessagesCount(messagesCountDto) {
+  debugger;
+  try {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/GetUnreadedMessagesCount`,messagesCountDto,{
+      
+      headers: {
+        'Content-Type': 'application/json',
+      },
+     
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
+  }
+}
 //User idleri memberidye dönüştür
 // export async function findGroupChatIdByClientId(data) {
 //   debugger;

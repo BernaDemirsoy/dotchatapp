@@ -23,8 +23,8 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
   }
   useEffect(()=>{
   fetchMessagesData(); 
-  debugger;
  console.log(messages);
+ console.log(receiveMessage);
   },[currentChat,receiveMessage]);
 
   const formatDate = (dateTimeString) => {
@@ -44,7 +44,6 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
                     {message.message}
                   </p>
                   <div className='delivered-date-container'>
-                    
                     <p className='deliveredDate'>{formatDate(message.deliveredDate)}</p>
                     <p className={`status ${message.isRead?"readed":"unreaded"}`}>{message.isRead?"Okundu":"İletildi"}</p>
                     <BiCheckDouble size={20} className={`check ${message.isRead?"readed":"unreaded"}`}/>
