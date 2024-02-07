@@ -53,7 +53,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
       setCurrentUserName(currentUser.data.userName);
     }
   },[currentUser]);
-
+  
   const createGroupForStarting=async()=>{
     try {
         // const data=new FormData();
@@ -97,24 +97,22 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
   useEffect(()=>{
     allChatGroup();
   },[]);
-  
 
   useEffect(() => {
     debugger;
     const updatedCounter = counter;
-    counter.map(eleman => {
-      if (eleman.name === counterRealTime.name) {
-        counter.splice(eleman);
-      }
-      const isNameExistInCounter = updatedCounter.some(eleman => eleman.name === counterRealTime.name);
+    for (let i = 0; i < updatedCounter.length; i++) {
+      const element = updatedCounter[i];
+      if (element.name === counterRealTime[i].name) {
+        counter.pop(element);
+      };
+      const isNameExistInCounter = updatedCounter.some(eleman => eleman.name === counterRealTime[i].name);
       if (!isNameExistInCounter) {
-        updatedCounter.push({ name: counterRealTime.name, count: counterRealTime.count });
+        updatedCounter.push({ name: counterRealTime[i].name, count: counterRealTime[i].count });
       }
-    })
-  
+    };
     setCounter(updatedCounter);
   }, [counterRealTime]);
-
 
   useEffect(()=>{
 

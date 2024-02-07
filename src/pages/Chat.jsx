@@ -78,15 +78,7 @@ useEffect(()=>{
   if(currentUser){
      if(currentUser.data.isAvatarImageSet){
        allContacts();
-       if(connection){
-        const data={
-          message:"Başlangıç Mesajı",
-          receiverClientId:"7a84b14f-0397-4f30-bec5-cbeeab3e5fa0",
-          currentUserId:currentUser.id,
-      };
-        connection.invoke("SendMessageToBinaryGroup",data).catch(error=>console.error(error));
-        console.log("default mesaj gitti");
-      }
+     
      }else{
        navigate(`/setavatar/${currentUser.id}`)
      }

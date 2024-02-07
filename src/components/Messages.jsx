@@ -12,6 +12,7 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
   const connectionId = useSelector(state => state.connectionId);
   const fetchMessagesData=async()=>{
     const response=await getAllChatMessage(currentChat.chatGroupId);
+    debugger;
     if(response.status==200){
         if(response.data.length>0){
           setmessages(response.data);

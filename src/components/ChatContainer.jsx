@@ -27,8 +27,8 @@ export default function ChatContainer({currentChat,currentUser,chatType,contacts
                     const response=await sendMessageToBinaryGroup(data);
                     if(response.status==200){
                         console.log(response.data);
-                        connection.invoke("SendMessageToBinaryGroup",data).catch(error=>console.error(error));
                         debugger;
+                        connection.invoke("SendMessageToBinaryGroup",data).catch(error=>console.error(error));
                         await handleSendUnreadedMessage();
                        
                     }
@@ -55,7 +55,8 @@ export default function ChatContainer({currentChat,currentUser,chatType,contacts
         if (connection) {
           connection.on("receiveMessage", (msg) => {
             setReceiveMessage(msg);
-            const listedData = {};
+          });
+          const listedData = {};
             connection.on("receiveCount", (count) => {
               debugger;
               listedData.name = count.userName;
@@ -64,13 +65,8 @@ export default function ChatContainer({currentChat,currentUser,chatType,contacts
               finalDataArray.push(finalData);
               setCounter(finalDataArray);
             });
-
-          });
-
-         
         }
-       
-        
+
       }, [connection]);
       
       const handleSendUnreadedMessage = async () => {
