@@ -97,7 +97,7 @@ export async function setAvatar(id,data) {
 }
 //Mesaj Gönderme
 export async function sendMessageToBinaryGroup(data) {
-  debugger;
+
   try {
     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/SendMessageToBinaryGroup`, data,{
       headers: {
@@ -130,7 +130,7 @@ export async function getAllChatMessage(ChatGroupId) {
 }
 //Bütün okunmamış mesajları listelenmesi
 export async function getUnreadedMessagesCount(messagesCountDto) {
-  debugger;
+
   try {
     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/GetUnreadedMessagesCount`,messagesCountDto,{
       
@@ -144,25 +144,10 @@ export async function getUnreadedMessagesCount(messagesCountDto) {
     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
   }
 }
-//User idleri memberidye dönüştür
-// export async function findGroupChatIdByClientId(data) {
-//   debugger;
-//   try {
-//     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/findGroupChatIdByClientId`, data,{
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-     
-//     });
-//     return response;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.title || 'Apiden Mesaj Gönderilemedi.');
-//   }
-// }
 
 //ChatGroup oluşturma
 export async function createGroup(data) {
-  
+  debugger;
   try {
     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/createGroup`, data, {
       headers: {
@@ -175,9 +160,24 @@ export async function createGroup(data) {
     throw new Error(error.response?.data?.title || 'Grup oluşturulamadı.');
   }
 }
+//createGroupForStarting
+export async function createGroupForStarting(memberInfo) {
+  debugger;
+  try {
+    const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/CreateGroupForStarting`, memberInfo, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.title || 'Grup member oluşturulamadı.');
+  }
+}
+
 //Group members oluşturma
 export async function createGroupMembers(memberInfo) {
-
+  debugger;
   try {
     const response = await axios.post(`${API_BASE_URL_ACCOUNT}/chat/createGroupMembers`, memberInfo, {
       headers: {

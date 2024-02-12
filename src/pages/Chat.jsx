@@ -2,7 +2,7 @@ import React, { useState,useEffect} from 'react'
 import { useNavigate, useParams} from "react-router-dom";
 import * as signalR from '@microsoft/signalr';
 import '../style/chat.scss';
-import {getAllContacts,getUserById,connectingLog} from '../services/api'
+import {getAllContacts,getUserById,groupExistingControl,createGroupMembers,createGroup} from '../services/api'
 import Contacts from '../components/Contacts';
 import Welcome from '../components/Welcome';
 import ChatContainer from '../components/ChatContainer';
@@ -59,7 +59,6 @@ function Chat() {
   useEffect(()=>{
 
     if(currentUser){
-
       fetchData(currentUser.data);
     }
     
@@ -78,7 +77,6 @@ useEffect(()=>{
   if(currentUser){
      if(currentUser.data.isAvatarImageSet){
        allContacts();
-     
      }else{
        navigate(`/setavatar/${currentUser.id}`)
      }
@@ -95,9 +93,7 @@ const handleChatType=(type)=>{
 }
 
 const handleCount=(counter)=>{
-
   setCounter(counter);
-  debugger;
   console.log("chatteyim");
   console.log(counter);
 }

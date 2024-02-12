@@ -48,7 +48,6 @@ export default function SetAvatar() {
             }
             const response=await setAvatar(userId,data);
             const result=response.data.result.succeeded;
-            debugger;
             if(result){
                 toast.success("Kullanıcı başarıyla eklendi.", {
                     position: "bottom-right",

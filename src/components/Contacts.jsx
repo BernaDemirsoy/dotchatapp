@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 export default function Contacts({contacts,currentUser,changeChat,setChatType,currentChat,counterRealTime}) {
    const connectionId = useSelector(state => state.connectionId);
    const connection = useSelector(state => state.connection);
-
   const [currentUserName,setCurrentUserName]=useState(undefined);
   const [currentUserImage,setCurrentUserImage]=useState(undefined);
   const [currentSelected,setCurrentSelected]=useState(undefined);
@@ -29,6 +28,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
   const [groupAvatarImage,setgroupAvatarImage]=useState(undefined);
   const [value, setValue] = useState('one');
   const [counter,setCounter]=useState([]);
+  
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -54,46 +54,6 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
     }
   },[currentUser]);
   
-  const createGroupForStarting=async()=>{
-    try {
-        // const data=new FormData();
-        
-        contacts.forEach(async contact => { 
-            const exist=await groupExistingControl(contact.chatGroupId);
-            const chatgroups=exist.data;
-              if(chatgroups.length==0){
-                    const data={
-                      
-                      description:currentUser.data.userName+"//"+contact.userName,
-                      IsBinaryGroup:1};
-                      
-                    const response=await createGroup(data);
-                    if(!(response.status=="200" && response.data!=null)){
-                      console.log(response.error.message);
-                    }else
-                    {
-                      console.log("grubun versi");
-                      console.log(response);
-                      const memberInfo={
-                        currentUserId:currentUser.data.id,
-                        chatGroup:response.data,
-                        contactUser:contact};
-
-                          //Yaratılan gruba member ataması yapıldı
-                          const finalResonse=await createGroupMembers(memberInfo);
-                          console.log("grup member bilgileri");
-                          console.log(finalResonse.data);
-                      };
-                
-              };
-        });
-       
- 
-    } catch (error) {
-      alert(error.message+"grup oluşturulurken hata alındı");
-    }
-    
-  };
   useEffect(()=>{
     allChatGroup();
   },[]);
@@ -115,13 +75,11 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
   }, [counterRealTime]);
 
   useEffect(()=>{
-
     if(contacts.length>0){
-      createGroupForStarting();
       getAllUnreadedMessages(contacts);
       console.log(counter);
     }
-  },[contacts]);
+  },[]);
 
   const allChatGroup=async()=>{
     const filteredId=0;
@@ -160,7 +118,6 @@ const toBase64 = async (file) => {
       reject(new Error('Geçersiz dosya türü'));
       return;
     }
-
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -183,7 +140,6 @@ const shortenBase64 = async (file) => {
     console.error('Hata:', error);
   }
 };
-
   //Api fonksiyonu
   async function createGroupFunc(data){
 
