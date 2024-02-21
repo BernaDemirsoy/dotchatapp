@@ -71,4 +71,13 @@
         }
         
     }
+    &::-webkit-scrollbar{
+        width: 0.5rem;
+        scroll-padding-bottom: 0;
+        &-thumb{
+            background-color: #ac98bd;
+            width: 0.1rem;
+            border-radius: 0.5rem;
+        }
+    }
 }

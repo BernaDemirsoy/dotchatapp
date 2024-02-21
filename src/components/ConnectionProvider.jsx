@@ -8,15 +8,13 @@ const ConnectionProvider = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Bağlantıyı oluştur
+   
     const connection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5189/Chat")  // Hub URL'sini belirtin
+      .withUrl("http://localhost:5189/Chat") 
       .build();
 
-    // Bağlantıyı Redux store'a set et
     dispatch(setConnection(connection));
 
-    // Bağlantıyı başlat
     connection.start()
     .then(() => {
       console.log('Bağlantı başarıyla başlatıldı.');

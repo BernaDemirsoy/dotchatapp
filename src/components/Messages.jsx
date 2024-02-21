@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useState,useRef} from 'react';
 import * as signalR from '@microsoft/signalr';
 import "../style/messages.scss";
 import {getAllChatMessage,findGroupChatIdByClientId} from "../services/api"
@@ -8,8 +8,8 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
   const connection = useSelector(state => state.connection);
   const [messages,setmessages]=useState([]);
   const [defaultMsg,setDefault]=useState("Henüz bir mesajlaşma kaydı Yok");
-  const [memberIds,setmembersIds]=useState([]);
   const connectionId = useSelector(state => state.connectionId);
+  const containerRef = useRef();
   const fetchMessagesData=async()=>{
     const response=await getAllChatMessage(currentChat.chatGroupId);
     debugger;
@@ -22,6 +22,11 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
         }
     } 
   }
+
+  useEffect(() => {
+    // Scroll to the bottom when messages change
+    containerRef.current.scrollTop = containerRef.current.scrollHeight;
+  }, [messages]);
   useEffect(()=>{
   fetchMessagesData(); 
  console.log(messages);
@@ -32,8 +37,9 @@ export default function Messages({receiveMessage,currentChat,currentUser}) {
     const dateTimeObject = new Date(dateTimeString);
     return dateTimeObject.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 };
+
   return (
-    <div className='msg-Container'>
+    <div className='msg-Container' ref={containerRef}>
       {
         
          messages.length===0 ? <div>{defaultMsg}</div>: messages.map((message)=>{

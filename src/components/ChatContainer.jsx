@@ -50,25 +50,26 @@ export default function ChatContainer({currentChat,currentUser,chatType,contacts
         
      };  
      useEffect(() => {
-        
-        const finalDataArray = [];
         if (connection) {
           connection.on("receiveMessage", (msg) => {
             setReceiveMessage(msg);
           });
-          const listedData = {};
-            connection.on("receiveCount", (count) => {
-              debugger;
-              listedData.name = count.userName;
-              listedData.count = count.count;
-              const finalData = { ...listedData };
-              finalDataArray.push(finalData);
-              setCounter(finalDataArray);
-            });
         }
 
       }, [connection]);
-      
+
+      useEffect(()=>{
+        const finalDataArray = [];
+              const listedData = {};
+              connection.on("receiveCount", (count) => {
+                debugger;
+                listedData.name = count.userName;
+                listedData.count = count.count;
+                const finalData = { ...listedData };
+                finalDataArray.push(finalData);
+                setCounter(finalDataArray);
+              });
+    });
       const handleSendUnreadedMessage = async () => {
         if (contacts.length > 0) {
 
@@ -77,8 +78,7 @@ export default function ChatContainer({currentChat,currentUser,chatType,contacts
                 currentUserId: currentUser.data.id,
                 receiverUserId: currentChat.id,
               };
-      
-              await connection.invoke("SetUnreadedMessage", data).catch((error) => console.error(error));
+              await connection.invoke("SetUnreadedMessage", data).catch((error) => console.error(error));   
         }
       };
       

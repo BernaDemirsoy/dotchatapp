@@ -93,9 +93,8 @@ const handleChatType=(type)=>{
 }
 
 const handleCount=(counter)=>{
+
   setCounter(counter);
-  console.log("chatteyim");
-  console.log(counter);
 }
 
   return (

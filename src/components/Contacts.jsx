@@ -59,19 +59,19 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
   },[]);
 
   useEffect(() => {
+    let updatedCounter = counter;
     debugger;
-    const updatedCounter = counter;
-    for (let i = 0; i < updatedCounter.length; i++) {
-      const element = updatedCounter[i];
-      if (element.name === counterRealTime[i].name) {
-        counter.pop(element);
+    if(counterRealTime.length!==0){
+      debugger;
+      for (let i = 0; i < updatedCounter.length; i++) {
+        // const element = updatedCounter[i];
+        if(updatedCounter[i].name === counterRealTime[0].name){
+          updatedCounter[i].count=counterRealTime[0].count;
+        }
       };
-      const isNameExistInCounter = updatedCounter.some(eleman => eleman.name === counterRealTime[i].name);
-      if (!isNameExistInCounter) {
-        updatedCounter.push({ name: counterRealTime[i].name, count: counterRealTime[i].count });
-      }
-    };
-    setCounter(updatedCounter);
+      setCounter(updatedCounter);
+    }
+
   }, [counterRealTime]);
 
   useEffect(()=>{
@@ -79,7 +79,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
       getAllUnreadedMessages(contacts);
       console.log(counter);
     }
-  },[]);
+  },[contacts]);
 
   const allChatGroup=async()=>{
     const filteredId=0;
@@ -93,7 +93,6 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
     const finalDataArray = [];
     for (const contact of contacts) {
       const listedData = {
-       
       };
       if (contact.id != currentUser.data.id) {
         const data = {
@@ -101,10 +100,8 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
           currentUserId: currentUser.data.id
         };
         const response = await getUnreadedMessagesCount(data);
-  
         listedData.name = contact.userName; 
         listedData.count = response.data;
-  
         const finalData = { ...listedData };
         finalDataArray.push(finalData);
       }
@@ -178,6 +175,7 @@ const shortenBase64 = async (file) => {
   };
 
   const handleChangeContactsArea=()=>{
+    debugger;
     setContactsAres(!contactsArea);
   }
   const changeCurrentChat=(index,group)=>{
