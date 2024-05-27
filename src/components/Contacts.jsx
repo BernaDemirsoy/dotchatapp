@@ -28,6 +28,8 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
   const [groupAvatarImage,setgroupAvatarImage]=useState(undefined);
   const [value, setValue] = useState('one');
   const [counter,setCounter]=useState([]);
+  const [matchingCounts, setMatchingCounts] = useState([]);
+const [changes,setChanges]=useState(false);
   
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -71,10 +73,26 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
       };
       setCounter(updatedCounter);
     }
-
+    setCounter(updatedCounter);
+    setChanges(!changes);
+    //alert(counter.map((count)=>`name:${count.name}+${count.count}`));
+    
   }, [counterRealTime]);
 
   useEffect(()=>{
+    const updatedMatchingCounts = contacts.map(contact => {
+      const matchingCount = counter.find(count => count.name === contact.userName);
+      return {
+        name: contact.userName,
+        count: matchingCount ? Number(matchingCount.count) : 0
+      };
+    });
+    setMatchingCounts(updatedMatchingCounts);
+    //alert("Im here")
+    //alert(matchingCounts.map((count)=>`name:${count.name}+${count.count}`));
+  },[changes])
+
+  useEffect(()=>{ 
     if(contacts.length>0){
       getAllUnreadedMessages(contacts);
       console.log(counter);
@@ -107,6 +125,7 @@ export default function Contacts({contacts,currentUser,changeChat,setChatType,cu
       }
     }
     setCounter(finalDataArray);
+    setChanges(!changes);
   };
  // File'ı base64'e çevirme
 const toBase64 = async (file) => {
@@ -175,7 +194,6 @@ const shortenBase64 = async (file) => {
   };
 
   const handleChangeContactsArea=()=>{
-    debugger;
     setContactsAres(!contactsArea);
   }
   const changeCurrentChat=(index,group)=>{
@@ -272,19 +290,23 @@ const shortenBase64 = async (file) => {
                 <div>
                 {contacts.length > 0 ? (
                   contacts.map((contact, index) => {
-                    let matchingCount = counter.find((count) => count.name === contact.userName);
+                     var matchingCount = matchingCounts==null ? counter.find((count) => count.name === contact.userName): matchingCounts.find((count) => count.name === contact.userName);
                     return (
+                      <div>
                       <div className={`group ${index === currentSelected ? "selected" : ""}`} key={index} onClick={() => changeCurrentChat(index, contact)}>
                         <div className="avatar">
                           <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt='avatar'></img>
                         </div>
                         <div className="description">
-                          <h3>{contact.userName}</h3>
-                          <Badge className='number' badgeContent={matchingCount ? Number(matchingCount.count) : 0} color="secondary">
-                            <MailIcon  />
-                          </Badge>
-                        </div>
+                       <h3>{contact.userName}</h3>
+                       <Badge className='number' badgeContent={matchingCount ? Number(matchingCount.count) : 0} color="secondary">
+                         <MailIcon  />
+                       </Badge>
+                     </div>
                       </div>
+                       
+                      </div>
+                      
                     );
                   })
                 ) : (
